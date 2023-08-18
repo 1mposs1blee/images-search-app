@@ -39,13 +39,18 @@ export class App extends Component {
       }
     } catch (error) {
       console.log(error.message);
+
+      this.setState({ isLoading: false });
     }
   }
 
   handleFormSubmit = searchQuery => {
     if (searchQuery === this.state.searchQuery) {
+      alert('You wrote the same search query.');
+
       return;
     }
+
     this.setState({ ...INITIAL_STATE, searchQuery });
   };
 
