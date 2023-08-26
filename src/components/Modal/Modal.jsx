@@ -1,48 +1,54 @@
-import { Component } from 'react';
+import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Overlay, ImageModal, LargeImage } from './Modal.styled';
 
-export class Modal extends Component {
-  componentDidMount() {
-    document.addEventListener('keydown', this.onKeyDown);
+export const Modal = ({
+  largeImageURL,
+  tags,
+  onLargeImageToggle,
+  scrollPosition,
+}) => {
+  useEffect(() => {
+    const onKeyDown = e => {
+      if (e.code !== 'Escape') {
+        return;
+      }
+
+      onLargeImageToggle();
+    };
+
+    document.addEventListener('keydown', onKeyDown);
 
     document.body.classList.add('overflow-hidden');
-  }
 
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.onKeyDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
 
-    document.body.classList.remove('overflow-hidden');
-  }
+      document.body.classList.remove('overflow-hidden');
 
-  onKeyDown = e => {
-    if (e.code !== 'Escape') {
-      return;
-    }
+      window.scrollTo({
+        top: scrollPosition,
+        behavior: 'auto',
+      });
+    };
+  }, [onLargeImageToggle, scrollPosition]);
 
-    this.props.onLargeImageToggle();
-  };
-
-  onOverlayClick = e => {
+  const onOverlayClick = e => {
     if (e.target !== e.currentTarget) {
       return;
     }
 
-    this.props.onLargeImageToggle();
+    onLargeImageToggle();
   };
 
-  render() {
-    const { largeImageURL, tags } = this.props;
-
-    return (
-      <Overlay onClick={this.onOverlayClick}>
-        <ImageModal>
-          <LargeImage src={largeImageURL} alt={tags} />
-        </ImageModal>
-      </Overlay>
-    );
-  }
-}
+  return (
+    <Overlay onClick={onOverlayClick}>
+      <ImageModal>
+        <LargeImage src={largeImageURL} alt={tags} />
+      </ImageModal>
+    </Overlay>
+  );
+};
 
 Modal.propTypes = {
   largeImageURL: PropTypes.string.isRequired,

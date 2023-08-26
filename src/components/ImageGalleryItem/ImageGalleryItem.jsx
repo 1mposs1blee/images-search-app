@@ -16,6 +16,7 @@ export const ImageGalleryItem = ({
       </GalleryItem>
       {isOpenModal && (
         <Modal
+          scrollPosition={window.scrollY}
           largeImageURL={largeImageURL}
           tags={tags}
           onLargeImageToggle={onLargeImageToggle}
