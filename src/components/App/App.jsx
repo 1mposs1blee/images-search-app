@@ -1,5 +1,4 @@
-import { useAppState } from 'hooks/use-app-state';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { fetchImages } from 'services/pixabay-api';
 import { SearchBar } from 'components/Searchbar';
 import { ImageGallery } from 'components/ImageGallery';
@@ -8,22 +7,13 @@ import { Loader } from 'components/Loader';
 import { Wrapper } from './App.styled';
 
 export const App = () => {
-  const {
-    searchQuery,
-    setSearchQuery,
-    result,
-    setResult,
-    page,
-    setPage,
-    per_page,
-    totalPage,
-    setTotalPage,
-    isLoading,
-    setIsLoading,
-    openModals,
-    setOpenModals,
-    resetState,
-  } = useAppState();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [result, setResult] = useState([]);
+  const [page, setPage] = useState(1);
+  const [per_page] = useState(12);
+  const [totalPage, setTotalPage] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [openModals, setOpenModals] = useState({});
 
   useEffect(() => {
     if (!searchQuery) {
@@ -56,7 +46,7 @@ export const App = () => {
     };
 
     fetchData();
-  }, [searchQuery, page, per_page, setIsLoading, setResult, setTotalPage]);
+  }, [searchQuery, page, per_page]);
 
   const handleFormSubmit = newSearchQuery => {
     if (newSearchQuery === searchQuery) {
@@ -65,9 +55,12 @@ export const App = () => {
       return;
     }
 
-    resetState();
-
     setSearchQuery(newSearchQuery);
+    setResult([]);
+    setPage(1);
+    setTotalPage(0);
+    setIsLoading(false);
+    setOpenModals({});
   };
 
   const onClickLoadMore = () => {
